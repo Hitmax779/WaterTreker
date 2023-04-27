@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Трекер дневного питья</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="style.css">
+</head>
+
+<body>
+    <header>
+        <h1>Трекер дневного питья</h1>
+        <p>Отслеживайте свое потребление воды каждый день</p>
+    </header>
+
+    <main>
+        <div class="container">
+            <div class="inputs">
+                <label for="weight">Вес:</label>
+                <input type="number" id="weight">
+                <label for="activity-level">Уровень активности:</label>
+                <select id="activity-level">
+                <option value="1.2">Минимальный</option>
+                <option value="1.375">Низкий</option>
+                <option value="1.55">Средний</option>
+                <option value="1.725">Высокий</option>
+                <option value="1.9">Очень высокий</option>
+              </select>
+                <button onclick="calculateWaterIntake()">Рассчитать норму питья воды</button>
+                <p id="result"></p>
+            </div>
+            <div class="history">
+                <form>
+                    <label for="amount">Количество выпитой воды:</label>
+                    <input type="number" id="amount">
+                    <label for="time">Время:</label>
+                    <input type="time" id="time">
+                    <button type="submit">Добавить</button>
+                </form>
+                <h2>История питья воды</h2>
+                <ul id="history"></ul>
+                <button id="clear-button">Очистить историю</button>
+            </div>
+
+        </div>
+
+    </main>
+    <footer>
+        <p>&copy; Трекер дневного питья, 2023</p>
+    </footer>
+    <div class="profile">
+
+        <h2><span>Логин:</span><span id="myVarSpan"></span></h2>
+    </div>
+
+    <canvas width="160" height="100" id="myChart"></canvas>
+    <script src="script.js"></script>
+
+    <script>
+        // Создаем массивы для хранения времени и количества выпитой воды
+        const drinkTime = [];
+        const drinkAmount = [];
+
+        // Перебираем drinkHistory и извлекаем данные о времени и количестве выпитой воды
+        drinkHistory.forEach(drink => {
+            drinkTime.push(drink.time);
+            drinkAmount.push(drink.amount);
+        });
+        /*// Создаем массив дат за последние 7 дней
+        let dates = [];
+        let currentDate = new Date();
+        for (let i = 6; i >= 0; i--) {
+            let date = new Date(currentDate);
+            date.setTime(date.getTime() - i * 24 * 60 * 60 * 1000);
+            dates.push(date.toLocaleDateString());
+        } */
+
+        // Далее используем библиотеку для построения графика
+        // Создаем новый элемент canvas
+        const canvas = document.createElement('canvas');
+        document.body.appendChild(canvas);
+        const chartData = drinkHistory.map((drink) => {
+            return [new Date(drink.time), drink.amount];
+        });
+
+        // Получаем контекст для отрисовки графика
+        const ctx = canvas.getContext('2d');
+
+
+        // Создаем новый объект Chart и передаем ему данные для построения графика
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: drinkTime,
+                datasets: [{
+                    label: 'Количество выпитой воды',
+                    data: drinkAmount,
+                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                    borderColor: 'rgba(255, 99, 132, 1)',
+                    borderWidth: 1,
+
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero: true,
+                            stepSize: 25,
+                            max: 200
+                        }
+                    }]
+                }
+            }
+        });
+        Chart.updateSeries([{
+            data: chartData
+        }]);
+    </script>
+
+</body>
+
+</html>
